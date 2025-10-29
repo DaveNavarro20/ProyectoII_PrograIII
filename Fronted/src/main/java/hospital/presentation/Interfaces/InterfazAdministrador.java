@@ -6,7 +6,7 @@ import hospital.presentation.Dashboard.Dashboard_View;
 import hospital.logic.Service;
 import hospital.presentation.Medicamentos.MedicamentosController;
 import hospital.presentation.Medicamentos.MedicamentosModel;
-import hospital.presentation.Mensajeria.MensajeriaPanel;
+import hospital.presentation.Mensajeria.VentanaMensajeria;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -21,6 +21,7 @@ public class InterfazAdministrador {
     public static hospital.presentation.Farmaceuticos.FarmaceuticosController farmaceuticosController;
     public static hospital.presentation.Pacientes.PacientesController pacientesController;
     public static hospital.presentation.Historico.HistoricosController HistoricosController;
+    private static VentanaMensajeria ventanaMensajeria;
 
     public final static int MODE_CREATE = 1;
     public final static int MODE_EDIT = 2;
@@ -39,6 +40,9 @@ public class InterfazAdministrador {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
+                if (ventanaMensajeria != null) {
+                    ventanaMensajeria.cerrar();
+                }
                 Service.instance().stop();
             }
         });
@@ -79,16 +83,12 @@ public class InterfazAdministrador {
         HistoricosController = new hospital.presentation.Historico.HistoricosController(historicoView,historicosModel);
         tabbedPane.addTab("Historico", new ImageIcon(Objects.requireNonNull(InterfazAdministrador.class.getResource("/Imagenes/Historico.png"))) , historicoView.getPanel());
 
-        // --- NUEVO: Mensajería
-        MensajeriaPanel mensajeriaPanel = new MensajeriaPanel(usuarioActual);
-        tabbedPane.addTab("Mensajes", new ImageIcon(Objects.requireNonNull(InterfazAdministrador.class.getResource("/Imagenes/Receta.png"))), mensajeriaPanel.getPanel());
-
         // --- Acerca de
         Acerca_De acercaDe = new Acerca_De();
         tabbedPane.addTab("Acerca de...", new ImageIcon(Objects.requireNonNull(InterfazAdministrador.class.getResource("/Imagenes/Receta.png"))) , acercaDe.getPanel());
 
         // --- Ventana principal
-        window.setSize(1300, 500);
+        window.setSize(1200, 600);
         window.setResizable(false);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setTitle("Recetas - Administrador - " + idAdmin + " (ADM)" );
@@ -96,7 +96,12 @@ public class InterfazAdministrador {
                 InterfazAdministrador.class.getResource("/Imagenes/Receta.png")
         );
         window.setIconImage(icon);
-        window.setVisible(true);
         window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        // Abrir ventana de mensajería automáticamente DESPUÉS de que la ventana principal sea visible
+        SwingUtilities.invokeLater(() -> {
+            ventanaMensajeria = new VentanaMensajeria(usuarioActual, window);
+        });
     }
 }

@@ -5,6 +5,7 @@ import hospital.logic.Service;
 import hospital.logic.Usuario;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -16,9 +17,8 @@ public class MensajeriaPanel extends JPanel {
     private JList<String> listaUsuarios;
     private JButton btnEnviar;
     private JButton btnRefrescar;
-    private JButton btnRecibirMensajes;
     private JTextArea areaMensajes;
-    private Timer timer; // Para auto-refresh
+    private Timer timer;
 
     public MensajeriaPanel(Usuario usuarioActual) {
         this.usuarioActual = usuarioActual;
@@ -29,82 +29,74 @@ public class MensajeriaPanel extends JPanel {
     }
 
     private void inicializarComponentes() {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(5, 5));
+        setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        // Panel superior con información del usuario
-        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSuperior.add(new JLabel("Usuario conectado: " + usuarioActual.getNombre() + " (" + usuarioActual.getId() + ")"));
+        // Panel superior: Info usuario
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setBorder(BorderFactory.createTitledBorder("Usuario conectado"));
+        JLabel lblUsuario = new JLabel(usuarioActual.getNombre());
+        lblUsuario.setFont(new Font("Arial", Font.BOLD, 12));
+        lblUsuario.setBorder(new EmptyBorder(5, 5, 5, 5));
+        panelSuperior.add(lblUsuario, BorderLayout.CENTER);
         add(panelSuperior, BorderLayout.NORTH);
 
-        // Panel central dividido
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setDividerLocation(350);
-
-        // Lado izquierdo: lista de usuarios activos
-        JPanel panelUsuarios = new JPanel(new BorderLayout(5, 5));
+        // Panel central: Usuarios activos
+        JPanel panelUsuarios = new JPanel(new BorderLayout(3, 3));
         panelUsuarios.setBorder(BorderFactory.createTitledBorder("Usuarios Activos (logueados)"));
 
         modeloUsuarios = new DefaultListModel<>();
         listaUsuarios = new JList<>(modeloUsuarios);
         listaUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listaUsuarios.setFont(new Font("Arial", Font.PLAIN, 12));
+        listaUsuarios.setFont(new Font("Arial", Font.PLAIN, 11));
 
         JScrollPane scrollUsuarios = new JScrollPane(listaUsuarios);
-        scrollUsuarios.setPreferredSize(new Dimension(300, 300));
+        scrollUsuarios.setPreferredSize(new Dimension(320, 150));
         panelUsuarios.add(scrollUsuarios, BorderLayout.CENTER);
 
-        JPanel panelBotonesUsuarios = new JPanel(new GridLayout(3, 1, 5, 5));
+        // Botones
+        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+        panelBotones.setBorder(new EmptyBorder(3, 0, 0, 0));
 
-        btnRefrescar = new JButton("🔄 Refrescar Lista");
+        btnRefrescar = new JButton("Refrescar");
+        btnRefrescar.setFont(new Font("Arial", Font.PLAIN, 11));
         btnRefrescar.addActionListener(e -> cargarUsuariosActivos());
 
-        btnEnviar = new JButton("✉️ Enviar Mensaje");
+        btnEnviar = new JButton("Enviar");
+        btnEnviar.setFont(new Font("Arial", Font.PLAIN, 11));
         btnEnviar.addActionListener(e -> enviarMensaje());
 
-        btnRecibirMensajes = new JButton("📥 Recibir Mensajes");
-        btnRecibirMensajes.addActionListener(e -> recibirMensajes());
+        panelBotones.add(btnRefrescar);
+        panelBotones.add(btnEnviar);
+        panelUsuarios.add(panelBotones, BorderLayout.SOUTH);
 
-        panelBotonesUsuarios.add(btnRefrescar);
-        panelBotonesUsuarios.add(btnEnviar);
-        panelBotonesUsuarios.add(btnRecibirMensajes);
-        panelUsuarios.add(panelBotonesUsuarios, BorderLayout.SOUTH);
+        add(panelUsuarios, BorderLayout.CENTER);
 
-        splitPane.setLeftComponent(panelUsuarios);
-
-        // Lado derecho: mensajes
-        JPanel panelMensajes = new JPanel(new BorderLayout(5, 5));
-        panelMensajes.setBorder(BorderFactory.createTitledBorder("Mensajes"));
+        // Panel inferior: Mensajes
+        JPanel panelMensajes = new JPanel(new BorderLayout(3, 3));
+        panelMensajes.setBorder(BorderFactory.createTitledBorder("Mensajes Enviados"));
 
         areaMensajes = new JTextArea();
         areaMensajes.setEditable(false);
-        areaMensajes.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        areaMensajes.setFont(new Font("Monospaced", Font.PLAIN, 10));
         areaMensajes.setLineWrap(true);
         areaMensajes.setWrapStyleWord(true);
-        areaMensajes.setText("=== BANDEJA DE MENSAJES ===\n\n" +
-                "• Seleccione un usuario y presione 'Enviar Mensaje' para enviar\n" +
-                "• Presione 'Recibir Mensajes' para ver nuevos mensajes\n" +
-                "• Los mensajes se actualizan automáticamente cada 5 segundos\n\n");
 
         JScrollPane scrollMensajes = new JScrollPane(areaMensajes);
+        scrollMensajes.setPreferredSize(new Dimension(320, 200));
         panelMensajes.add(scrollMensajes, BorderLayout.CENTER);
 
-        JButton btnLimpiar = new JButton("🗑️ Limpiar");
-        btnLimpiar.addActionListener(e -> {
-            areaMensajes.setText("=== BANDEJA DE MENSAJES ===\n\n");
-        });
+        JButton btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.setFont(new Font("Arial", Font.PLAIN, 11));
+        btnLimpiar.addActionListener(e -> areaMensajes.setText(""));
         panelMensajes.add(btnLimpiar, BorderLayout.SOUTH);
 
-        splitPane.setRightComponent(panelMensajes);
+        add(panelMensajes, BorderLayout.SOUTH);
 
-        add(splitPane, BorderLayout.CENTER);
-
-        // Cargar usuarios activos al inicializar
         cargarUsuariosActivos();
     }
 
     private void iniciarAutoRefresh() {
-        // Timer para refrescar mensajes cada 5 segundos
         timer = new Timer(5000, e -> {
             recibirMensajes();
             cargarUsuariosActivos();
@@ -118,7 +110,7 @@ public class MensajeriaPanel extends JPanel {
             List<String> usuariosActivos = service.getUsuariosActivos();
 
             if (usuariosActivos.isEmpty()) {
-                modeloUsuarios.addElement("(No hay otros usuarios conectados)");
+                modeloUsuarios.addElement("(No hay usuarios conectados)");
                 btnEnviar.setEnabled(false);
             } else {
                 for (String userId : usuariosActivos) {
@@ -132,15 +124,15 @@ public class MensajeriaPanel extends JPanel {
                 btnEnviar.setEnabled(true);
             }
         } catch (Exception ex) {
-            // Silencioso para no molestar con errores repetitivos
+            // Silencioso
         }
     }
 
     private void enviarMensaje() {
         String seleccion = listaUsuarios.getSelectedValue();
-        if (seleccion == null || seleccion.contains("(No hay otros usuarios")) {
+        if (seleccion == null || seleccion.contains("(No hay usuarios")) {
             JOptionPane.showMessageDialog(this,
-                    "Por favor seleccione un usuario de la lista",
+                    "Seleccione un usuario",
                     "Advertencia",
                     JOptionPane.WARNING_MESSAGE);
             return;
@@ -149,9 +141,9 @@ public class MensajeriaPanel extends JPanel {
         String destinatarioId = seleccion.split(" - ")[0];
 
         JPanel panel = new JPanel(new BorderLayout(5, 5));
-        panel.add(new JLabel("Destinatario: " + seleccion), BorderLayout.NORTH);
+        panel.add(new JLabel("Para: " + seleccion), BorderLayout.NORTH);
 
-        JTextArea textArea = new JTextArea(5, 30);
+        JTextArea textArea = new JTextArea(4, 25);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -178,29 +170,18 @@ public class MensajeriaPanel extends JPanel {
                     service.enviarMensaje(mensaje);
 
                     areaMensajes.append("=== MENSAJE ENVIADO ===\n");
-                    areaMensajes.append("Para: " + seleccion + "\n");
+                    areaMensajes.append("Para: " + destinatarioId + "\n");
                     areaMensajes.append("Mensaje: " + contenido + "\n");
-                    areaMensajes.append("Fecha: " + java.time.LocalDateTime.now() + "\n");
                     areaMensajes.append("========================\n\n");
 
                     areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
 
-                    JOptionPane.showMessageDialog(this,
-                            "Mensaje enviado exitosamente",
-                            "Éxito",
-                            JOptionPane.INFORMATION_MESSAGE);
-
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this,
-                            "Error al enviar mensaje: " + ex.getMessage(),
+                            "Error: " + ex.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "El mensaje no puede estar vacío",
-                        "Advertencia",
-                        JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -211,32 +192,23 @@ public class MensajeriaPanel extends JPanel {
 
             if (!mensajes.isEmpty()) {
                 for (Mensaje mensaje : mensajes) {
-                    areaMensajes.append("★★★ MENSAJE RECIBIDO ★★★\n");
-                    areaMensajes.append("De: " + mensaje.getRemitenteNombre() +
-                            " (" + mensaje.getRemitenteId() + ")\n");
-                    areaMensajes.append("Mensaje: " + mensaje.getContenido() + "\n");
-                    areaMensajes.append("Fecha: " + mensaje.getFecha() + "\n");
-                    areaMensajes.append("============================\n\n");
+                    areaMensajes.append("★★★ RECIBIDO ★★★\n");
+                    areaMensajes.append("De: " + mensaje.getRemitenteNombre() + "\n");
+                    areaMensajes.append(mensaje.getContenido() + "\n");
+                    areaMensajes.append("===================\n\n");
                 }
 
                 areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
 
-                // Notificación emergente solo para el primero (para no saturar)
-                if (mensajes.size() == 1) {
-                    Mensaje primer = mensajes.get(0);
-                    JOptionPane.showMessageDialog(this,
-                            "De: " + primer.getRemitenteNombre() + "\n" + primer.getContenido(),
-                            "Nuevo Mensaje",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this,
-                            "Tienes " + mensajes.size() + " mensajes nuevos",
-                            "Nuevos Mensajes",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                // Notificación solo si hay mensajes
+                Mensaje primer = mensajes.get(0);
+                JOptionPane.showMessageDialog(this,
+                        "De: " + primer.getRemitenteNombre() + "\n" + primer.getContenido(),
+                        "Nuevo Mensaje",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception ex) {
-            System.err.println("Error recibiendo mensajes: " + ex.getMessage());
+            // Silencioso
         }
     }
 

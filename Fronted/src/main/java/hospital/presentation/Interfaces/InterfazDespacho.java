@@ -1,5 +1,6 @@
 package hospital.presentation.Interfaces;
 
+import hospital.logic.Usuario;
 import hospital.presentation.Acerca_De;
 import hospital.presentation.Dashboard.Dashboard_View;
 import hospital.presentation.Despacho.Controller;
@@ -9,7 +10,10 @@ import hospital.presentation.Historico.Historico_View;
 import hospital.presentation.Historico.HistoricosController;
 import hospital.presentation.Historico.HistoricosModel;
 import hospital.logic.Service;
+import hospital.presentation.Mensajeria.VentanaMensajeria;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
@@ -19,8 +23,9 @@ public class InterfazDespacho {
     public static JFrame window;
     public static Controller Controller;
     public static HistoricosController historicosController;
+    private static VentanaMensajeria ventanaMensajeria;
 
-    public static void ventanaDespacho(String idFarmaceuta) {
+    public static void ventanaDespacho(String idFarmaceuta, Usuario usuarioActual) {
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -34,6 +39,9 @@ public class InterfazDespacho {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
+                if (ventanaMensajeria != null) {
+                    ventanaMensajeria.cerrar();
+                }
                 Service.instance().stop();
             }
         });
@@ -61,12 +69,17 @@ public class InterfazDespacho {
         tabbedPane.addTab("Acerca de...", new ImageIcon(Objects.requireNonNull(InterfazDespacho.class.getResource("/Imagenes/Receta.png"))), acercaDe.getPanel());
 
         // --- Ventana principal
-        window.setSize(1300, 500);
+        window.setSize(1200, 600);
         window.setResizable(false);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setTitle("Recetas - Farmaceuta - " + idFarmaceuta + " (Farm)");
-        window.setVisible(true);
         window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        // Abrir ventana de mensajería automáticamente
+        SwingUtilities.invokeLater(() -> {
+            ventanaMensajeria = new VentanaMensajeria(usuarioActual, window);
+        });
     }
 
 }

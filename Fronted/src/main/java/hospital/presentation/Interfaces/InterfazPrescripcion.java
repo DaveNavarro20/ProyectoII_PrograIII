@@ -10,7 +10,7 @@ import hospital.presentation.Historico.HistoricosController;
 import hospital.presentation.Historico.HistoricosModel;
 import hospital.logic.Medico;
 import hospital.logic.Service;
-import hospital.presentation.Mensajeria.MensajeriaPanel;
+import hospital.presentation.Mensajeria.VentanaMensajeria;
 import hospital.presentation.Prescripcion.PrescripcionController;
 import hospital.presentation.Prescripcion.PrescripcionModel;
 import hospital.presentation.Prescripcion.View_Prescripcion;
@@ -25,6 +25,7 @@ public class InterfazPrescripcion {
     public static PrescripcionController prescripcionController;
     public static HistoricosController historicosController;
     public static DashboardController dashboardController;
+    private static VentanaMensajeria ventanaMensajeria;
 
     public final static int MODE_CREATE = 1;
     public final static int MODE_EDIT = 2;
@@ -43,6 +44,9 @@ public class InterfazPrescripcion {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
+                if (ventanaMensajeria != null) {
+                    ventanaMensajeria.cerrar();
+                }
                 Service.instance().stop();
             }
         });
@@ -66,16 +70,12 @@ public class InterfazPrescripcion {
         historicosController = new HistoricosController(historicoView, historicosModel);
         tabbedPane.addTab("Historico", new ImageIcon(Objects.requireNonNull(InterfazDespacho.class.getResource("/Imagenes/Historico.png"))), historicoView.getPanel());
 
-        // --- NUEVO: Mensajería
-        MensajeriaPanel mensajeriaPanel = new MensajeriaPanel(usuarioActual);
-        tabbedPane.addTab("Mensajes", new ImageIcon(Objects.requireNonNull(InterfazPrescripcion.class.getResource("/Imagenes/Receta.png"))), mensajeriaPanel.getPanel());
-
         // --- Acerca de
         Acerca_De acercaDe = new Acerca_De();
         tabbedPane.addTab("Acerca de...", new ImageIcon(Objects.requireNonNull(InterfazPrescripcion.class.getResource("/Imagenes/Receta.png"))), acercaDe.getPanel());
 
         // --- Ventana principal
-        window.setSize(1300, 500);
+        window.setSize(1200, 600);
         window.setResizable(false);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setTitle("Recetas - Medico - " + idMedico + " (Med)");
@@ -83,7 +83,12 @@ public class InterfazPrescripcion {
                 InterfazPrescripcion.class.getResource("/Imagenes/Receta.png")
         );
         window.setIconImage(icon);
-        window.setVisible(true);
         window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        // Abrir ventana de mensajería automáticamente
+        SwingUtilities.invokeLater(() -> {
+            ventanaMensajeria = new VentanaMensajeria(usuarioActual, window);
+        });
     }
 }

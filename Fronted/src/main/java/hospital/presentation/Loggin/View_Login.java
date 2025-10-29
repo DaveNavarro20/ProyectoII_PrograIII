@@ -117,7 +117,7 @@ public class View_Login implements PropertyChangeListener {
             } else if (usuario instanceof Farmaceutico) {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panelPrincipal);
                 topFrame.dispose();
-                //InterfazDespacho.ventanaDespacho(usuario.getId(), usuario);
+                InterfazDespacho.ventanaDespacho(usuario.getId(), usuario);
             } else if (usuario instanceof Administrador) {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panelPrincipal);
                 topFrame.dispose();
