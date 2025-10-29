@@ -1,7 +1,7 @@
 package hospital.logic;
 
 public class Protocol {
-    public static final String SERVER = "localhost";
+    public static final String SERVER = "DESKTOP-2JAD8JF";
     public static final int PORT = 1234;
 
     // Operaciones de Médicos
