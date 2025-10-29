@@ -54,6 +54,11 @@ public class Protocol {
     public static final int RECETA_MODIFICAR_ESTADO = 709;
     public static final int RECETA_FINDALL = 710;
 
+    // **NUEVAS** Operaciones de Notificaciones y Usuarios Activos
+    public static final int USUARIO_GET_ACTIVOS = 801;
+    public static final int USUARIO_ENVIAR_MENSAJE = 802;
+    public static final int USUARIO_GET_MENSAJES = 803; // Obtener mensajes pendientes
+
     // Errores y desconexión
     public static final int ERROR_NO_ERROR = 0;
     public static final int ERROR_ERROR = 1;

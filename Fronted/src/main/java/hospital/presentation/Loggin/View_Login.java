@@ -113,19 +113,18 @@ public class View_Login implements PropertyChangeListener {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panelPrincipal);
                 topFrame.dispose();
                 Medico medico = (Medico) usuario;
-                InterfazPrescripcion.ventanaPrescripcion(medico,usuario.getId());
+                InterfazPrescripcion.ventanaPrescripcion(medico, usuario.getId(), usuario);
             } else if (usuario instanceof Farmaceutico) {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panelPrincipal);
                 topFrame.dispose();
-                InterfazDespacho.ventanaDespacho(usuario.getId());
+                //InterfazDespacho.ventanaDespacho(usuario.getId(), usuario);
             } else if (usuario instanceof Administrador) {
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(panelPrincipal);
                 topFrame.dispose();
-                InterfazAdministrador.ventanaMedicos(usuario.getId());
+                InterfazAdministrador.ventanaMedicos(usuario.getId(), usuario);
             } else {
                 JOptionPane.showMessageDialog(null, "No se encontró al usuario");
             }
         }
     }
 }
-

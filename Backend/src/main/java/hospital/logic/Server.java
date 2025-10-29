@@ -3,18 +3,20 @@ package hospital.logic;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Server {
     ServerSocket ss;
     List<Worker> workers;
+    Map<String, Worker> usuariosActivos;
+    Map<String, List<Mensaje>> mensajesPendientes; // Cola de mensajes por usuario
 
     public Server() {
         try {
             ss = new ServerSocket(Protocol.PORT);
             workers = Collections.synchronizedList(new ArrayList<Worker>());
+            usuariosActivos = Collections.synchronizedMap(new HashMap<>());
+            mensajesPendientes = Collections.synchronizedMap(new HashMap<>());
             System.out.println("Servidor iniciado en puerto " + Protocol.PORT + "...");
         } catch (IOException ex) {
             System.err.println("Error al iniciar el servidor: " + ex.getMessage());
@@ -47,7 +49,51 @@ public class Server {
 
     public void remove(Worker w) {
         workers.remove(w);
+        if (w.getUsuarioLogueado() != null) {
+            usuariosActivos.remove(w.getUsuarioLogueado().getId());
+            System.out.println("Usuario " + w.getUsuarioLogueado().getId() + " desconectado");
+        }
         System.out.println("Cliente desconectado. Clientes restantes: " + workers.size());
+    }
+
+    public void registrarUsuarioActivo(String usuarioId, Worker worker) {
+        usuariosActivos.put(usuarioId, worker);
+        // Inicializar cola de mensajes si no existe
+        if (!mensajesPendientes.containsKey(usuarioId)) {
+            mensajesPendientes.put(usuarioId, Collections.synchronizedList(new ArrayList<>()));
+        }
+        System.out.println("Usuario " + usuarioId + " registrado como activo");
+        System.out.println("Usuarios activos: " + usuariosActivos.keySet());
+    }
+
+    public List<String> getUsuariosActivos() {
+        return new ArrayList<>(usuariosActivos.keySet());
+    }
+
+    public Worker getWorkerPorUsuario(String usuarioId) {
+        return usuariosActivos.get(usuarioId);
+    }
+
+    // Agregar mensaje a la cola del destinatario
+    public void agregarMensaje(String destinatarioId, Mensaje mensaje) {
+        if (!mensajesPendientes.containsKey(destinatarioId)) {
+            mensajesPendientes.put(destinatarioId, Collections.synchronizedList(new ArrayList<>()));
+        }
+        mensajesPendientes.get(destinatarioId).add(mensaje);
+        System.out.println("Mensaje agregado para " + destinatarioId + ". Total pendientes: " +
+                mensajesPendientes.get(destinatarioId).size());
+    }
+
+    // Obtener mensajes pendientes de un usuario
+    public List<Mensaje> getMensajesPendientes(String usuarioId) {
+        List<Mensaje> mensajes = mensajesPendientes.get(usuarioId);
+        if (mensajes != null && !mensajes.isEmpty()) {
+            List<Mensaje> copia = new ArrayList<>(mensajes);
+            mensajes.clear(); // Limpiar después de leer
+            System.out.println("Devolviendo " + copia.size() + " mensajes a " + usuarioId);
+            return copia;
+        }
+        return new ArrayList<>();
     }
 
     public void shutdown() {

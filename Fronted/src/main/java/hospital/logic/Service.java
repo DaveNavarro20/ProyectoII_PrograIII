@@ -3,7 +3,9 @@ package hospital.logic;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Service {
     private static Service theInstance;
@@ -16,6 +18,7 @@ public class Service {
     Socket s;
     ObjectOutputStream os;
     ObjectInputStream is;
+    List<Consumer<Mensaje>> observadores = new ArrayList<>();
 
     private Service() {
         try {
@@ -24,6 +27,16 @@ public class Service {
             is = new ObjectInputStream(s.getInputStream());
         } catch (Exception e) {
             System.exit(-1);
+        }
+    }
+
+    public void agregarObservadorMensajes(Consumer<Mensaje> observador) {
+        observadores.add(observador);
+    }
+
+    private void notificarObservadores(Mensaje mensaje) {
+        for (Consumer<Mensaje> observador : observadores) {
+            observador.accept(mensaje);
         }
     }
 
@@ -40,6 +53,46 @@ public class Service {
         os.flush();
         s.shutdownOutput();
         s.close();
+    }
+
+    // ================= NUEVOS MÉTODOS =================
+
+    public List<String> getUsuariosActivos() {
+        try {
+            os.writeInt(Protocol.USUARIO_GET_ACTIVOS);
+            os.flush();
+            if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+                return (List<String>) is.readObject();
+            } else {
+                return List.of();
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void enviarMensaje(Mensaje mensaje) throws Exception {
+        os.writeInt(Protocol.USUARIO_ENVIAR_MENSAJE);
+        os.writeObject(mensaje);
+        os.flush();
+        if (is.readInt() != Protocol.ERROR_NO_ERROR) {
+            throw new Exception("ERROR AL ENVIAR MENSAJE");
+        }
+    }
+
+    public List<Mensaje> getMensajesPendientes() {
+        try {
+            os.writeInt(Protocol.USUARIO_GET_MENSAJES);
+            os.flush();
+            if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+                return (List<Mensaje>) is.readObject();
+            } else {
+                return List.of();
+            }
+        } catch (Exception ex) {
+            System.err.println("Error obteniendo mensajes: " + ex.getMessage());
+            return List.of();
+        }
     }
 
     // ================= MÉDICOS ================= //

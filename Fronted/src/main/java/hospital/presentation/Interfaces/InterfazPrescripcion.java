@@ -1,5 +1,6 @@
 package hospital.presentation.Interfaces;
 
+import hospital.logic.Usuario;
 import hospital.presentation.Acerca_De;
 import hospital.presentation.Dashboard.DashboardController;
 import hospital.presentation.Dashboard.DashboardModel;
@@ -9,6 +10,7 @@ import hospital.presentation.Historico.HistoricosController;
 import hospital.presentation.Historico.HistoricosModel;
 import hospital.logic.Medico;
 import hospital.logic.Service;
+import hospital.presentation.Mensajeria.MensajeriaPanel;
 import hospital.presentation.Prescripcion.PrescripcionController;
 import hospital.presentation.Prescripcion.PrescripcionModel;
 import hospital.presentation.Prescripcion.View_Prescripcion;
@@ -28,7 +30,7 @@ public class InterfazPrescripcion {
     public final static int MODE_EDIT = 2;
     public static final Color BACKGROUND_ERROR = new Color(255, 102, 102);
 
-    public static void ventanaPrescripcion(Medico medico,String idMedico) {
+    public static void ventanaPrescripcion(Medico medico, String idMedico, Usuario usuarioActual) {
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {}
@@ -48,7 +50,7 @@ public class InterfazPrescripcion {
         // --- Prescripción
         PrescripcionModel prescripcionModel = new PrescripcionModel();
         View_Prescripcion prescripcionView = new View_Prescripcion();
-        prescripcionView.setDoctorIngresado(medico.getId()); // ✅ pasamos el objeto completo
+        prescripcionView.setDoctorIngresado(medico.getId());
         prescripcionController = new PrescripcionController(prescripcionView, prescripcionModel);
         tabbedPane.addTab("Prescripción", new ImageIcon(Objects.requireNonNull(InterfazPrescripcion.class.getResource("/Imagenes/Prescribir.png"))), prescripcionView.getPanel());
 
@@ -63,6 +65,10 @@ public class InterfazPrescripcion {
         Historico_View historicoView = new Historico_View();
         historicosController = new HistoricosController(historicoView, historicosModel);
         tabbedPane.addTab("Historico", new ImageIcon(Objects.requireNonNull(InterfazDespacho.class.getResource("/Imagenes/Historico.png"))), historicoView.getPanel());
+
+        // --- NUEVO: Mensajería
+        MensajeriaPanel mensajeriaPanel = new MensajeriaPanel(usuarioActual);
+        tabbedPane.addTab("Mensajes", new ImageIcon(Objects.requireNonNull(InterfazPrescripcion.class.getResource("/Imagenes/Receta.png"))), mensajeriaPanel.getPanel());
 
         // --- Acerca de
         Acerca_De acercaDe = new Acerca_De();

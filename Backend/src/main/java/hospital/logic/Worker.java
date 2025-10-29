@@ -12,6 +12,7 @@ public class Worker {
     Service service;
     ObjectOutputStream os;
     ObjectInputStream is;
+    Usuario usuarioLogueado;
 
     public Worker(Server srv, Socket s, Service service) {
         try {
@@ -56,6 +57,10 @@ public class Worker {
         } catch (IOException ex) {
             System.err.println("Error al cerrar socket: " + ex.getMessage());
         }
+    }
+
+    public Usuario getUsuarioLogueado() {
+        return usuarioLogueado;
     }
 
     public void listen() {
@@ -189,6 +194,8 @@ public class Worker {
                             String clave = (String) is.readObject();
                             Usuario usuario = service.login(id, clave);
                             if (usuario != null) {
+                                usuarioLogueado = usuario;
+                                srv.registrarUsuarioActivo(usuario.getId(), this);
                                 os.writeInt(Protocol.ERROR_NO_ERROR);
                                 os.writeObject(usuario);
                             } else {
@@ -219,6 +226,47 @@ public class Worker {
                             Usuario usuario = (Usuario) is.readObject();
                             service.actualizarUsuario(usuario);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception ex) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                        }
+                        break;
+
+                    // ================= NUEVAS OPERACIONES =================
+                    case Protocol.USUARIO_GET_ACTIVOS:
+                        try {
+                            List<String> activos = srv.getUsuariosActivos();
+                            if (usuarioLogueado != null) {
+                                activos.remove(usuarioLogueado.getId());
+                            }
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeObject(activos);
+                        } catch (Exception ex) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                        }
+                        break;
+
+                    case Protocol.USUARIO_ENVIAR_MENSAJE:
+                        try {
+                            Mensaje mensaje = (Mensaje) is.readObject();
+                            // Guardar el mensaje en la cola del destinatario
+                            srv.agregarMensaje(mensaje.getDestinatarioId(), mensaje);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            System.out.println("Mensaje guardado: " + mensaje.getRemitenteId() +
+                                    " -> " + mensaje.getDestinatarioId());
+                        } catch (Exception ex) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                        }
+                        break;
+
+                    case Protocol.USUARIO_GET_MENSAJES:
+                        try {
+                            if (usuarioLogueado != null) {
+                                List<Mensaje> mensajes = srv.getMensajesPendientes(usuarioLogueado.getId());
+                                os.writeInt(Protocol.ERROR_NO_ERROR);
+                                os.writeObject(mensajes);
+                            } else {
+                                os.writeInt(Protocol.ERROR_ERROR);
+                            }
                         } catch (Exception ex) {
                             os.writeInt(Protocol.ERROR_ERROR);
                         }
