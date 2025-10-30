@@ -34,7 +34,7 @@ public class MensajeriaPanel extends JPanel {
 
         // Panel superior: Info usuario
         JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.setBorder(BorderFactory.createTitledBorder("Usuario conectado"));
+        panelSuperior.setBorder(BorderFactory.createTitledBorder("Tú"));
         JLabel lblUsuario = new JLabel(usuarioActual.getNombre());
         lblUsuario.setFont(new Font("Arial", Font.BOLD, 12));
         lblUsuario.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -43,7 +43,7 @@ public class MensajeriaPanel extends JPanel {
 
         // Panel central: Usuarios activos
         JPanel panelUsuarios = new JPanel(new BorderLayout(3, 3));
-        panelUsuarios.setBorder(BorderFactory.createTitledBorder("Usuarios Activos (logueados)"));
+        panelUsuarios.setBorder(BorderFactory.createTitledBorder("Usuarios en Linea"));
 
         modeloUsuarios = new DefaultListModel<>();
         listaUsuarios = new JList<>(modeloUsuarios);
@@ -192,10 +192,10 @@ public class MensajeriaPanel extends JPanel {
 
             if (!mensajes.isEmpty()) {
                 for (Mensaje mensaje : mensajes) {
-                    areaMensajes.append("★★★ RECIBIDO ★★★\n");
+                    areaMensajes.append("=== MENSAJE RECIBIDO ===\n");
                     areaMensajes.append("De: " + mensaje.getRemitenteNombre() + "\n");
                     areaMensajes.append(mensaje.getContenido() + "\n");
-                    areaMensajes.append("===================\n\n");
+                    areaMensajes.append("==========================\n\n");
                 }
 
                 areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
@@ -207,9 +207,7 @@ public class MensajeriaPanel extends JPanel {
                         "Nuevo Mensaje",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-        } catch (Exception ex) {
-            // Silencioso
-        }
+        } catch (Exception ex) {}
     }
 
     public JPanel getPanel() {

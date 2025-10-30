@@ -14,7 +14,7 @@ public class VentanaMensajeria extends JFrame {
     public VentanaMensajeria(Usuario usuario, JFrame ventanaPrincipal) {
         this.ventanaPrincipal = ventanaPrincipal;
 
-        setTitle("Usuarios Activos");
+        setTitle("Chat");
         setSize(350, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // No se puede cerrar
         setResizable(false);
@@ -29,7 +29,7 @@ public class VentanaMensajeria extends JFrame {
         // Configurar icono
         try {
             Image icon = Toolkit.getDefaultToolkit().getImage(
-                    getClass().getResource("/Imagenes/Receta.png")
+                    getClass().getResource("/Imagenes/Mensajes.png")
             );
             setIconImage(icon);
         } catch (Exception e) {
