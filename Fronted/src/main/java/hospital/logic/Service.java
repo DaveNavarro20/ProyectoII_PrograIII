@@ -55,7 +55,7 @@ public class Service {
         s.close();
     }
 
-    // ================= NUEVOS MÉTODOS =================
+    // ================= Mensajes y Usuarios =================
 
     public List<String> getUsuariosActivos() {
         try {
