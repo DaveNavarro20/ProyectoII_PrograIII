@@ -9,7 +9,7 @@ public class Server {
     ServerSocket ss;
     List<Worker> workers;
     Map<String, Worker> usuariosActivos;
-    Map<String, List<Mensaje>> mensajesPendientes; // Cola de mensajes por usuario
+    Map<String, List<Mensaje>> mensajesPendientes;
 
     public Server() {
         try {
@@ -58,7 +58,6 @@ public class Server {
 
     public void registrarUsuarioActivo(String usuarioId, Worker worker) {
         usuariosActivos.put(usuarioId, worker);
-        // Inicializar cola de mensajes si no existe
         if (!mensajesPendientes.containsKey(usuarioId)) {
             mensajesPendientes.put(usuarioId, Collections.synchronizedList(new ArrayList<>()));
         }
