@@ -1,6 +1,4 @@
-
 CREATE DATABASE Hospital;
-
 USE Hospital;
 
 -- Tabla base para usuarios
@@ -17,7 +15,7 @@ CREATE TABLE Medico (
 id VARCHAR(10) NOT NULL,
 especialidad VARCHAR(50) NOT NULL,
 PRIMARY KEY (id),
-FOREIGN KEY (id) REFERENCES Usuario(id) ON DELETE CASCADE
+ FOREIGN KEY (id) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 -- Tabla para Administradores
@@ -76,53 +74,63 @@ PRIMARY KEY (idPrescripcion),
 FOREIGN KEY (idReceta) REFERENCES Receta(idReceta) ON DELETE CASCADE
 );
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1', 'Juan', '111', 'MEDICO');
-INSERT INTO Medico (id, especialidad) VALUES ('1', 'Pediatra');
+-- Médicos
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1001', 'Dave Navarro', '1001', 'MEDICO');
+INSERT INTO Medico (id, especialidad) VALUES ('1001', 'Pediatría');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('2', 'Keneth', '2', 'MEDICO');
-INSERT INTO Medico (id, especialidad) VALUES ('2', 'Cardiologo');
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1002', 'Laura Gómez', '1002', 'MEDICO');
+INSERT INTO Medico (id, especialidad) VALUES ('1002', 'Cardiología');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('3', 'Ana', '222', 'ADMINISTRADOR');
-INSERT INTO Administrador (id) VALUES ('3');
+-- Administrador
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1003', 'Keneth Jara', '1003', 'ADMINISTRADOR');
+INSERT INTO Administrador (id) VALUES ('1003');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('4', 'Carlos', '333', 'FARMACEUTICO');
-INSERT INTO Farmaceutico (id) VALUES ('4');
+-- Farmacéuticos
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1004', 'Ana Torres', '1004', 'FARMACEUTICO');
+INSERT INTO Farmaceutico (id) VALUES ('1004');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('5', 'Dave', '2', 'FARMACEUTICO');
-INSERT INTO Farmaceutico (id) VALUES ('5');
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1005', 'Angel Ramirez', '1005', 'FARMACEUTICO');
+INSERT INTO Farmaceutico (id) VALUES ('1005');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('6', 'Andrey', '33', 'FARMACEUTICO');
-INSERT INTO Farmaceutico (id) VALUES ('6');
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1006', 'Kendall Vargas', '1006', 'FARMACEUTICO');
+INSERT INTO Farmaceutico (id) VALUES ('1006');
+
+-- Pacientes
+INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
+VALUES ('2001', 'María Fernández', '1998-01-12', '8888-2244');
 
 INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
-VALUES ('1', 'Maria', '1 de enero de 2000', '88888888');
+VALUES ('2002', 'Keilor Guillen', '2005-04-10', '7268-2583');
 
-INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
-VALUES ('2', 'Keilor', '10 de abril de 2005', '72682583');
+-- Medicamentos
+INSERT INTO Medicamento (id, nombre, presentacion)
+VALUES ('3001', 'Paracetamol', 'Tabletas 500 mg');
 
 INSERT INTO Medicamento (id, nombre, presentacion)
-VALUES ('1', 'Paracetamol', '500mg');
+VALUES ('3002', 'Amoxicilina', 'Cápsulas 500 mg');
 
 INSERT INTO Medicamento (id, nombre, presentacion)
-VALUES ('2', 'Jarabe', '1L');
+VALUES ('3003', 'Ibuprofeno', 'Tabletas 400 mg');
+
+-- Recetas
+INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
+VALUES ('R001', 'Entregada', '2025-09-10', '2001', '1001');
 
 INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('R1', 'Entregada', '10 de septiembre de 2025', '1', '1');
+VALUES ('R002', 'Pendiente', '2025-09-25', '2001', '1002');
 
 INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('J2D95', 'Lista', '25 de septiembre de 2025', '1', '1');
+VALUES ('R003', 'Entregada', '2025-09-27', '2002', '1001');
 
-INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('74GXU', 'Entregada', '27 de septiembre de 2025', '2', '1');
+-- Prescripciones
+INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
+VALUES ('R001', 'Paracetamol', 'Tabletas 500 mg', '2', 'Tomar una tableta cada 8 horas después de comer', '5 días');
 
 INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
-VALUES ('R1', 'Paracetamol', '500mg', '2', 'Tomar después de comer', '5');
+VALUES ('R002', 'Amoxicilina', 'Cápsulas 500 mg', '3', 'Tomar una cápsula cada 8 horas con agua', '7 días');
 
 INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
-VALUES ('J2D95', 'Paracetamol', '500mg', '1', 'Tomar 1 por dia', '7');
+VALUES ('R003', 'Ibuprofeno', 'Tabletas 400 mg', '2', 'Tomar cada 12 horas para el dolor', '5 días');
 
 INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
-VALUES ('74GXU', 'Jarabe', '1L', '5', '5 mililitros por dia, durante 1 semana', '7');
-
-INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
-VALUES ('74GXU', 'Paracetamol', '500mg', '1', 'Cuando le duela el cuerpo', '7');
+VALUES ('R003', 'Paracetamol', 'Tabletas 500 mg', '1', 'Tomar solo si tiene fiebre', '3 días');
