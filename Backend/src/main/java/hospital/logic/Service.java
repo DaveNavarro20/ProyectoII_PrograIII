@@ -130,7 +130,7 @@ public class Service {
             } else if (usuario instanceof Administrador) {
                 this.updateAdministrador((Administrador) usuario);
             }
-            stop();
+            //stop();
         } catch (Exception e) {
             System.out.println("Error al actualizar usuario: " + e.getMessage());
         }
@@ -196,50 +196,41 @@ public class Service {
         recetaDao.update(receta);
     }
 
-    public void deleteReceta(Receta receta) {
-        String estadoActual = receta.getEstado();
-
-        if ("Lista".equals(estadoActual)) {
-            receta.setEstado("Entregada");
-            JOptionPane.showMessageDialog(null, "La receta ha sido entregada exitosamente");
-        } else if ("Entregada".equals(estadoActual)) {
-            JOptionPane.showMessageDialog(null, "La receta ya fue entregada anteriormente");
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "La receta no está lista para entregar.\nEstado actual: " + estadoActual);
-        }
-    }
-
-    public void modificarEstadoReceta(Receta receta) {
+    public void modificarEstadoReceta(Receta receta) throws Exception {
         String estadoActual = receta.getEstado();
 
         switch (estadoActual) {
             case "Confeccionada":
                 receta.setEstado("Proceso");
-                JOptionPane.showMessageDialog(null,
-                        "Estado actualizado: Confeccionada → Proceso");
+                recetaDao.update(receta);
                 break;
 
             case "Proceso":
                 receta.setEstado("Lista");
-                JOptionPane.showMessageDialog(null,
-                        "Estado actualizado: Proceso → Lista");
+                recetaDao.update(receta);
                 break;
 
             case "Lista":
-                JOptionPane.showMessageDialog(null,
-                        "La receta está lista para entregar.\nUse el botón 'Entregar' para completar la entrega.");
-                break;
+                throw new Exception("RECETA_YA_LISTA");
 
             case "Entregada":
-                JOptionPane.showMessageDialog(null,
-                        "Esta receta ya fue entregada y no se puede modificar.");
-                break;
+                throw new Exception("RECETA_YA_ENTREGADA");
 
             default:
-                JOptionPane.showMessageDialog(null,
-                        "Estado no reconocido: " + estadoActual);
-                break;
+                throw new Exception("ESTADO_NO_RECONOCIDO");
+        }
+    }
+
+    public void deleteReceta(Receta receta) throws Exception {
+        String estadoActual = receta.getEstado();
+
+        if ("Lista".equals(estadoActual)) {
+            receta.setEstado("Entregada");
+            recetaDao.update(receta);
+        } else if ("Entregada".equals(estadoActual)) {
+            throw new Exception("RECETA_YA_ENTREGADA");
+        } else {
+            throw new Exception("RECETA_NO_LISTA");
         }
     }
 

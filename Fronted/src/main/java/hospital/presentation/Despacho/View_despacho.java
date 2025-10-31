@@ -54,26 +54,40 @@ public class View_despacho implements PropertyChangeListener {
             public void actionPerformed(ActionEvent e) {
                 int fila = tabla.getSelectedRow();
                 if (fila != -1) {
-                    Receta seleccionada = model.getList().get(fila);
-                    JFrame window = new JFrame();
-                    View_VerMedicamentos view = new View_VerMedicamentos();
-                    Model modeloMedicamentos = new Model();
-                    view.setModel(modeloMedicamentos);
-                    modeloMedicamentos.setListaPrescripcion(seleccionada.getPrescripcions());
-                    view.setObjeto(seleccionada.getPrescripcions());
-                    window.setSize(600, 350);
-                    window.setResizable(false);
-                    window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                    window.setTitle("Medicamentos de Receta: " + seleccionada.getIdReceta());
-                    window.setLocationRelativeTo(null);
-                    window.add(view.getPanel());
-
                     try {
+                        // Obtener la receta seleccionada
+                        Receta seleccionada = model.getList().get(fila);
+
+                        // Leer la receta completa con prescripciones desde el servidor
+                        Receta recetaCompleta = controller.obtenerRecetaCompleta(seleccionada);
+
+                        if (recetaCompleta.getPrescripcions() == null || recetaCompleta.getPrescripcions().isEmpty()) {
+                            JOptionPane.showMessageDialog(null, "Esta receta no tiene medicamentos asociados.");
+                            return;
+                        }
+
+                        // Crear ventana de medicamentos
+                        JFrame window = new JFrame();
+                        View_VerMedicamentos view = new View_VerMedicamentos();
+                        Model modeloMedicamentos = new Model();
+                        view.setModel(modeloMedicamentos);
+                        modeloMedicamentos.setListaPrescripcion(recetaCompleta.getPrescripcions());
+                        view.setObjeto(recetaCompleta.getPrescripcions());
+
+                        window.setSize(600, 350);
+                        window.setResizable(false);
+                        window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                        window.setTitle("Medicamentos de Receta: " + recetaCompleta.getIdReceta());
+                        window.setLocationRelativeTo(null);
+                        window.add(view.getPanel());
+
                         modeloMedicamentos.setListmedicamentos();
+                        window.setVisible(true);
+
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(null, "Error al cargar medicamentos: " + ex.getMessage());
+                        ex.printStackTrace();
                     }
-                    window.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(null, "Por favor seleccione una receta primero.");
                 }

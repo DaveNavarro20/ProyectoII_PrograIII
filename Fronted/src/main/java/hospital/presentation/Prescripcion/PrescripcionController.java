@@ -191,7 +191,6 @@ public class PrescripcionController {
         }
 
         Service.instance().createReceta(receta);
-        Service.instance().stop();
 
         clearTemporalList();
     }

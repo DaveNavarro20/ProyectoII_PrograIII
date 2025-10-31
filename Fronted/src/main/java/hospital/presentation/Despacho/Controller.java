@@ -34,13 +34,32 @@ public class Controller {
             String estadoAnterior = receta.getEstado();
             Service.instance().modificarEstadoReceta(receta);
 
-            if (!estadoAnterior.equals(receta.getEstado())) {
-                actualizarLista();
-                Service.instance().stop();
+            // Mostrar mensaje de éxito en el cliente
+            switch (estadoAnterior) {
+                case "Confeccionada":
+                    JOptionPane.showMessageDialog(null, "Estado actualizado: Confeccionada → Proceso");
+                    break;
+                case "Proceso":
+                    JOptionPane.showMessageDialog(null, "Estado actualizado: Proceso → Lista");
+                    break;
             }
+
+            actualizarLista();
+
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Error al modificar estado: " + ex.getMessage());
+            // Mostrar mensajes específicos según el error
+            String mensaje = ex.getMessage();
+            if (mensaje.contains("RECETA_YA_LISTA")) {
+                JOptionPane.showMessageDialog(null,
+                        "La receta está lista para entregar.\nUse el botón 'Entregar' para completar la entrega.");
+            } else if (mensaje.contains("RECETA_YA_ENTREGADA")) {
+                JOptionPane.showMessageDialog(null,
+                        "Esta receta ya fue entregada y no se puede modificar.");
+            } else if (mensaje.contains("ESTADO_NO_RECONOCIDO")) {
+                JOptionPane.showMessageDialog(null, "Estado no reconocido");
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al modificar estado: " + mensaje);
+            }
         }
     }
 
@@ -55,12 +74,19 @@ public class Controller {
             }
 
             Service.instance().deleteReceta(receta);
+            JOptionPane.showMessageDialog(null, "La receta ha sido entregada exitosamente");
             actualizarLista();
-            Service.instance().stop();
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Error al entregar receta: " + ex.getMessage());
+            String mensaje = ex.getMessage();
+            if (mensaje.contains("RECETA_YA_ENTREGADA")) {
+                JOptionPane.showMessageDialog(null, "La receta ya fue entregada anteriormente");
+            } else if (mensaje.contains("RECETA_NO_LISTA")) {
+                JOptionPane.showMessageDialog(null,
+                        "La receta no está lista para entregar.\nEstado actual: " + receta.getEstado());
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al entregar receta: " + mensaje);
+            }
         }
     }
 
@@ -84,6 +110,10 @@ public class Controller {
             JOptionPane.showMessageDialog(null,
                     "Error en la búsqueda: " + ex.getMessage());
         }
+    }
+
+    public Receta obtenerRecetaCompleta(Receta receta) throws Exception {
+        return Service.instance().readReceta(receta);
     }
 
     public void limpiarBusqueda() {

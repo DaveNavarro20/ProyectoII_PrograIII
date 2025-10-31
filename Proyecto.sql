@@ -15,7 +15,7 @@ CREATE TABLE Medico (
 id VARCHAR(10) NOT NULL,
 especialidad VARCHAR(50) NOT NULL,
 PRIMARY KEY (id),
- FOREIGN KEY (id) REFERENCES Usuario(id) ON DELETE CASCADE
+FOREIGN KEY (id) REFERENCES Usuario(id) ON DELETE CASCADE
 );
 
 -- Tabla para Administradores
@@ -89,7 +89,7 @@ INSERT INTO Administrador (id) VALUES ('1003');
 INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1004', 'Ana Torres', '1004', 'FARMACEUTICO');
 INSERT INTO Farmaceutico (id) VALUES ('1004');
 
-INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1005', 'Angel Ramirez', '1005', 'FARMACEUTICO');
+INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1005', 'Ángel Ramírez', '1005', 'FARMACEUTICO');
 INSERT INTO Farmaceutico (id) VALUES ('1005');
 
 INSERT INTO Usuario (id, nombre, clave, tipoUsuario) VALUES ('1006', 'Kendall Vargas', '1006', 'FARMACEUTICO');
@@ -97,10 +97,13 @@ INSERT INTO Farmaceutico (id) VALUES ('1006');
 
 -- Pacientes
 INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
-VALUES ('2001', 'María Fernández', '1998-01-12', '8888-2244');
+VALUES ('2001', 'María Fernández', '12 de enero de 1998', '8888-2244');
 
 INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
-VALUES ('2002', 'Keilor Guillen', '2005-04-10', '7268-2583');
+VALUES ('2002', 'Keilor Guillén', '10 de abril de 2005', '7268-2583');
+
+INSERT INTO Paciente (id, nombre, fechaNacimiento, telefono)
+VALUES ('2003', 'Lucía Brenes', '19 de octubre de 2025', '6543-1278');
 
 -- Medicamentos
 INSERT INTO Medicamento (id, nombre, presentacion)
@@ -114,13 +117,13 @@ VALUES ('3003', 'Ibuprofeno', 'Tabletas 400 mg');
 
 -- Recetas
 INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('R001', 'Entregada', '2025-09-10', '2001', '1001');
+VALUES ('R001', 'Entregada', '10 de septiembre de 2025', '2001', '1001');
 
 INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('R002', 'Pendiente', '2025-09-25', '2001', '1002');
+VALUES ('R002', 'Lista', '25 de septiembre de 2025', '2001', '1002');
 
 INSERT INTO Receta (idReceta, estado, fecha, idPaciente, idMedico)
-VALUES ('R003', 'Entregada', '2025-09-27', '2002', '1001');
+VALUES ('R003', 'Entregada', '27 de septiembre de 2025', '2002', '1001');
 
 -- Prescripciones
 INSERT INTO Prescripcion (idReceta, nombre, presentacion, cantidad, indicaciones, duracion)
