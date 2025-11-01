@@ -1,7 +1,6 @@
 package hospital.logic;
 
 import hospital.data.*;
-
 import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,14 +27,6 @@ public class Service {
 
         } catch (Exception e) {
             System.exit(-1);
-        }
-    }
-
-    public void stop() {
-        try {
-            Database.instance().close();
-        } catch (Exception e) {
-            System.out.println(e);
         }
     }
 

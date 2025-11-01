@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Mensaje implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     private String remitenteId;
     private String remitenteNombre;

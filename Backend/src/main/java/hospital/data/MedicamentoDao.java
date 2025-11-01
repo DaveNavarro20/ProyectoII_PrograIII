@@ -1,7 +1,6 @@
 package hospital.data;
 
 import hospital.logic.Medicamento;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -98,23 +97,6 @@ public class MedicamentoDao {
         return resultado;
     }
 
-    public List<Medicamento> findByPresentacion(String presentacion) {
-        List<Medicamento> resultado = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM Medicamento WHERE presentacion LIKE ?";
-            PreparedStatement stm = db.prepareStatement(sql);
-            stm.setString(1, "%" + presentacion + "%");
-            ResultSet rs = db.executeQuery(stm);
-
-            while (rs.next()) {
-                resultado.add(from(rs));
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error: " + ex.getMessage());
-        }
-        return resultado;
-    }
-
     private Medicamento from(ResultSet rs) {
         try {
             Medicamento m = new Medicamento();
@@ -126,21 +108,5 @@ public class MedicamentoDao {
             System.err.println("Error al mapear Medicamento: " + ex.getMessage());
             return null;
         }
-    }
-
-    public boolean exists(String id) {
-        try {
-            String sql = "SELECT COUNT(*) FROM Medicamento WHERE id = ?";
-            PreparedStatement stm = db.prepareStatement(sql);
-            stm.setString(1, id);
-            ResultSet rs = db.executeQuery(stm);
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error: " + ex.getMessage());
-        }
-        return false;
     }
 }

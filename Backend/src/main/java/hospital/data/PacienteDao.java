@@ -1,8 +1,6 @@
 package hospital.data;
 
-import hospital.data.Database;
 import hospital.logic.Paciente;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,27 +97,6 @@ public class PacienteDao {
     }
 
     /**
-     * Obtiene todos los pacientes de la base de datos
-     * @return Lista de todos los pacientes
-     */
-    public List<Paciente> findAll() {
-        List<Paciente> pacientes = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM Paciente";
-            PreparedStatement stm = db.prepareStatement(sql);
-            ResultSet rs = db.executeQuery(stm);
-
-            // Iterar sobre todos los resultados
-            while (rs.next()) {
-                pacientes.add(from(rs));
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error al obtener pacientes: " + ex.getMessage());
-        }
-        return pacientes;
-    }
-
-    /**
      * Busca pacientes por nombre (búsqueda parcial)
      * @param nombre Texto a buscar en el nombre
      * @return Lista de pacientes que coinciden
@@ -142,27 +119,6 @@ public class PacienteDao {
     }
 
     /**
-     * Busca pacientes por teléfono
-     * @param telefono Número de teléfono
-     * @return Paciente encontrado o null
-     */
-    public Paciente findByTelefono(String telefono) {
-        try {
-            String sql = "SELECT * FROM Paciente WHERE telefono = ?";
-            PreparedStatement stm = db.prepareStatement(sql);
-            stm.setString(1, telefono);
-
-            ResultSet rs = db.executeQuery(stm);
-            if (rs.next()) {
-                return from(rs);
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error: " + ex.getMessage());
-        }
-        return null;
-    }
-
-    /**
      * Convierte un registro de ResultSet a objeto Paciente
      * @param rs ResultSet con los datos
      * @return Objeto Paciente construido
@@ -179,45 +135,5 @@ public class PacienteDao {
             System.err.println("Error al mapear Paciente: " + ex.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Verifica si existe un paciente con el ID dado
-     * @param id ID a verificar
-     * @return true si existe, false si no
-     */
-    public boolean exists(String id) {
-        try {
-            String sql = "SELECT COUNT(*) FROM Paciente WHERE id = ?";
-            PreparedStatement stm = db.prepareStatement(sql);
-            stm.setString(1, id);
-            ResultSet rs = db.executeQuery(stm);
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error: " + ex.getMessage());
-        }
-        return false;
-    }
-
-    /**
-     * Cuenta el total de pacientes registrados
-     * @return Número total de pacientes
-     */
-    public int count() {
-        try {
-            String sql = "SELECT COUNT(*) FROM Paciente";
-            PreparedStatement stm = db.prepareStatement(sql);
-            ResultSet rs = db.executeQuery(stm);
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            System.err.println("Error: " + ex.getMessage());
-        }
-        return 0;
     }
 }

@@ -48,17 +48,6 @@ public class Worker {
         System.out.println("Conexión cerrada...");
     }
 
-    public void interrupt() {
-        stop();
-        try {
-            if (s != null && !s.isClosed()) {
-                s.close();
-            }
-        } catch (IOException ex) {
-            System.err.println("Error al cerrar socket: " + ex.getMessage());
-        }
-    }
-
     public Usuario getUsuarioLogueado() {
         return usuarioLogueado;
     }
@@ -231,7 +220,7 @@ public class Worker {
                         }
                         break;
 
-                    // ================= NUEVAS OPERACIONES =================
+                    // ================= ACTIVOS =================
                     case Protocol.USUARIO_GET_ACTIVOS:
                         try {
                             List<String> activos = srv.getUsuariosActivos();
@@ -248,7 +237,6 @@ public class Worker {
                     case Protocol.USUARIO_ENVIAR_MENSAJE:
                         try {
                             Mensaje mensaje = (Mensaje) is.readObject();
-                            // Guardar el mensaje en la cola del destinatario
                             srv.agregarMensaje(mensaje.getDestinatarioId(), mensaje);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                             System.out.println("Mensaje guardado: " + mensaje.getRemitenteId() +

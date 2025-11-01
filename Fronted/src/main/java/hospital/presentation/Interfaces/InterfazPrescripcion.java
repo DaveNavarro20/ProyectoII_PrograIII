@@ -86,7 +86,7 @@ public class InterfazPrescripcion {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        // Abrir ventana de mensajería automáticamente
+        // Abre ventana de mensajeria
         SwingUtilities.invokeLater(() -> {
             ventanaMensajeria = new VentanaMensajeria(usuarioActual, window);
         });

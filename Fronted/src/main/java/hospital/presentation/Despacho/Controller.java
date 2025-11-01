@@ -1,9 +1,7 @@
 package hospital.presentation.Despacho;
 
-import hospital.logic.Prescripcion;
 import hospital.logic.Receta;
 import hospital.logic.Service;
-
 import javax.swing.JOptionPane;
 import java.util.List;
 
@@ -33,8 +31,6 @@ public class Controller {
         try {
             String estadoAnterior = receta.getEstado();
             Service.instance().modificarEstadoReceta(receta);
-
-            // Mostrar mensaje de éxito en el cliente
             switch (estadoAnterior) {
                 case "Confeccionada":
                     JOptionPane.showMessageDialog(null, "Estado actualizado: Confeccionada → Proceso");
@@ -47,7 +43,6 @@ public class Controller {
             actualizarLista();
 
         } catch (Exception ex) {
-            // Mostrar mensajes específicos según el error
             String mensaje = ex.getMessage();
             if (mensaje.contains("RECETA_YA_LISTA")) {
                 JOptionPane.showMessageDialog(null,
@@ -118,15 +113,5 @@ public class Controller {
 
     public void limpiarBusqueda() {
         actualizarLista();
-    }
-
-    public void verListaMedicamentos(List<Prescripcion> prescripciones) {
-        try {
-            model.setListaPrescripcion(prescripciones);
-            model.setListmedicamentos();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Error al cargar medicamentos: " + ex.getMessage());
-        }
     }
 }

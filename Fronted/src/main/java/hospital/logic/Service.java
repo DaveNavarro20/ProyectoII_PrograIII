@@ -30,16 +30,6 @@ public class Service {
         }
     }
 
-    public void agregarObservadorMensajes(Consumer<Mensaje> observador) {
-        observadores.add(observador);
-    }
-
-    private void notificarObservadores(Mensaje mensaje) {
-        for (Consumer<Mensaje> observador : observadores) {
-            observador.accept(mensaje);
-        }
-    }
-
     public void stop() {
         try {
             disconnect();
@@ -189,24 +179,6 @@ public class Service {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    // ================= ADMINISTRADORES ================= //
-
-    public Administrador readAdministrador(Administrador administrador) throws Exception {
-        os.writeInt(Protocol.ADMINISTRADOR_READ);
-        os.writeObject(administrador);
-        os.flush();
-        if (is.readInt() == Protocol.ERROR_NO_ERROR) return (Administrador) is.readObject();
-        else throw new Exception("ADMINISTRADOR NO EXISTE");
-    }
-
-    public void updateAdministrador(Administrador administrador) throws Exception {
-        os.writeInt(Protocol.ADMINISTRADOR_UPDATE);
-        os.writeObject(administrador);
-        os.flush();
-        if (is.readInt() == Protocol.ERROR_NO_ERROR) {}
-        else throw new Exception("ADMINISTRADOR NO EXISTE");
     }
 
     // ================= LOGIN ================= //
@@ -407,20 +379,6 @@ public class Service {
         try {
             os.writeInt(Protocol.RECETA_SEARCH_NO_ENTREGADAS);
             os.writeObject(receta);
-            os.flush();
-            if (is.readInt() == Protocol.ERROR_NO_ERROR) {
-                return (List<Receta>) is.readObject();
-            }
-            else return List.of();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public List<Receta> findRecetasPorEstado(String estado) {
-        try {
-            os.writeInt(Protocol.RECETA_FIND_POR_ESTADO);
-            os.writeObject(estado);
             os.flush();
             if (is.readInt() == Protocol.ERROR_NO_ERROR) {
                 return (List<Receta>) is.readObject();

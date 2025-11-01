@@ -69,10 +69,6 @@ public class Server {
         return new ArrayList<>(usuariosActivos.keySet());
     }
 
-    public Worker getWorkerPorUsuario(String usuarioId) {
-        return usuariosActivos.get(usuarioId);
-    }
-
     // Agregar mensaje a la cola del destinatario
     public void agregarMensaje(String destinatarioId, Mensaje mensaje) {
         if (!mensajesPendientes.containsKey(destinatarioId)) {
@@ -88,24 +84,11 @@ public class Server {
         List<Mensaje> mensajes = mensajesPendientes.get(usuarioId);
         if (mensajes != null && !mensajes.isEmpty()) {
             List<Mensaje> copia = new ArrayList<>(mensajes);
-            mensajes.clear(); // Limpiar después de leer
+            mensajes.clear();
             System.out.println("Devolviendo " + copia.size() + " mensajes a " + usuarioId);
             return copia;
         }
         return new ArrayList<>();
     }
 
-    public void shutdown() {
-        try {
-            System.out.println("Cerrando servidor...");
-            for (Worker worker : workers) {
-                worker.interrupt();
-            }
-            ss.close();
-            Service.instance().stop();
-            System.out.println("Servidor cerrado correctamente");
-        } catch (IOException ex) {
-            System.err.println("Error al cerrar servidor: " + ex.getMessage());
-        }
-    }
 }

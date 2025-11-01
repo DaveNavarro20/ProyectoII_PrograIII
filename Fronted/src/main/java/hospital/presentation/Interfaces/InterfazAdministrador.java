@@ -99,7 +99,7 @@ public class InterfazAdministrador {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        // Abrir ventana de mensajería automáticamente DESPUÉS de que la ventana principal sea visible
+        // Abre ventana de mensajeria
         SwingUtilities.invokeLater(() -> {
             ventanaMensajeria = new VentanaMensajeria(usuarioActual, window);
         });

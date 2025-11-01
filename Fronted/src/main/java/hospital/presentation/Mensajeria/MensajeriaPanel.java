@@ -3,7 +3,6 @@ package hospital.presentation.Mensajeria;
 import hospital.logic.Mensaje;
 import hospital.logic.Service;
 import hospital.logic.Usuario;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -31,8 +30,6 @@ public class MensajeriaPanel extends JPanel {
     private void inicializarComponentes() {
         setLayout(new BorderLayout(5, 5));
         setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        // Panel superior: Info usuario
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBorder(BorderFactory.createTitledBorder("Tú"));
         JLabel lblUsuario = new JLabel(usuarioActual.getNombre());
@@ -40,8 +37,6 @@ public class MensajeriaPanel extends JPanel {
         lblUsuario.setBorder(new EmptyBorder(5, 5, 5, 5));
         panelSuperior.add(lblUsuario, BorderLayout.CENTER);
         add(panelSuperior, BorderLayout.NORTH);
-
-        // Panel central: Usuarios activos
         JPanel panelUsuarios = new JPanel(new BorderLayout(3, 3));
         panelUsuarios.setBorder(BorderFactory.createTitledBorder("Usuarios en Linea"));
 
@@ -53,8 +48,6 @@ public class MensajeriaPanel extends JPanel {
         JScrollPane scrollUsuarios = new JScrollPane(listaUsuarios);
         scrollUsuarios.setPreferredSize(new Dimension(320, 150));
         panelUsuarios.add(scrollUsuarios, BorderLayout.CENTER);
-
-        // Botones
         JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
         panelBotones.setBorder(new EmptyBorder(3, 0, 0, 0));
 
@@ -71,8 +64,6 @@ public class MensajeriaPanel extends JPanel {
         panelUsuarios.add(panelBotones, BorderLayout.SOUTH);
 
         add(panelUsuarios, BorderLayout.CENTER);
-
-        // Panel inferior: Mensajes
         JPanel panelMensajes = new JPanel(new BorderLayout(3, 3));
         panelMensajes.setBorder(BorderFactory.createTitledBorder("Mensajes Enviados"));
 
@@ -123,9 +114,7 @@ public class MensajeriaPanel extends JPanel {
                 }
                 btnEnviar.setEnabled(true);
             }
-        } catch (Exception ex) {
-            // Silencioso
-        }
+        } catch (Exception ex) {}
     }
 
     private void enviarMensaje() {
@@ -199,8 +188,6 @@ public class MensajeriaPanel extends JPanel {
                 }
 
                 areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength());
-
-                // Notificación solo si hay mensajes
                 Mensaje primer = mensajes.get(0);
                 JOptionPane.showMessageDialog(this,
                         "De: " + primer.getRemitenteNombre() + "\n" + primer.getContenido(),
